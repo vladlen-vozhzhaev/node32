@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="ru">
+<%- include('components/head');  %>
+<body>
+<%- include('components/menu');  %>
+<div class="container my-3">
+    <h1 class="text-center">Редактирование статьи</h1>
+    <div class="col-sm-6 mx-auto">
+        <form action="/editArticle/<%= article.id%>" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <input value="<%= article.title%>" type="text" name="title" class="form-control" placeholder="Заголовок">
+            </div>
+            <div class="mb-3">
+                <textarea name="content" class="form-control" placeholder="Текст"><%= article.content %></textarea>
+            </div>
+            <div class="mb-3">
+                <input value="<%= article.author %>" type="text" name="author" class="form-control" placeholder="Автор">
+            </div>
+            <div class="mb-3">
+                <input type="submit" class="btn btn-primary form-control" value="Сохранить изменения">
+            </div>
+        </form>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+</body>
+</html>

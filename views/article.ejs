@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ru">
+<%- include('components/head');  %>
+<body>
+<%- include('components/menu');  %>
+<div class="container my-3">
+    <p>Имя пользователя: <%= name %></p>
+    <h2><%= article.title %>%></h2>
+    <div><%= article.content %></div>
+    <p>Автор: <%= article.author%></p>
+    <p><a href="/editArticle/<%= article.id%>">[редактировать]</a></p>
+    <p><a href="/deleteArticle/<%= article.id%>">[удалить]</a></p>
+</div>
+<div class="container">
+    <form action="/addComment" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="articleId" value="<%= article.id%>">
+        <div class="mb-3">
+            <textarea name="comment" class="form-control"></textarea>
+        </div>
+        <div class="mb-3">
+            <input type="submit" class="form-control btn btn-primary">
+        </div>
+    </form>
+    <div id="comments">
+        <% for (let i = 0; i < comments.length; i++) { %>
+            <p><%= comments[i].name %> <a href="/deleteComment/<%= comments[i].comment_id %>">[удалить]</a></p>
+            <p><%= comments[i].comment %></p>
+        <% }%>
+    </div>
+</div>
+<script>
+    let comments = document.getElementById('comments');
+    fetch('/getComments/<%= article.id %>')
+        .then(response=>response.json())
+        .then(result=>{
+            console.log(result);
+            result.forEach(comment=>{
+                let pUser = document.createElement('p');
+                let pComment = document.createElement('p');
+                let a = document.createElement('a');
+                a.href = "/deleteComment/"+comment.id;
+                a.innerText = " [удалить]";
+                pUser.innerText = comment.name;
+                pUser.append(a);
+                pComment.innerText = comment.comment;
+                comments.prepend(pUser, pComment);
+            })
+        });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+<%- include('components/footer'); %>
+</body>
+</html>

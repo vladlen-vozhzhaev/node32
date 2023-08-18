@@ -1,0 +1,18 @@
+<script>
+    const profileBtn = document.getElementById('profileBtn');
+    fetch('/getCurrentUserData')
+        .then(response=>response.json())
+        .then(result=>{
+            console.log(result);
+            profileBtn.innerHTML = "";
+            const profile = document.createElement('a');
+            const exit = document.createElement('a');
+            profile.classList.add('btn', 'btn-success', 'me-3');
+            exit.classList.add('btn', 'btn-success');
+            profile.innerText = "Профиль";
+            exit.innerText = "Выход";
+            profile.href = "/profile";
+            exit.href = "/logout";
+            profileBtn.append(profile, exit);
+        })
+</script>
