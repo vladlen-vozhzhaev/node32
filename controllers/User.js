@@ -1,17 +1,10 @@
 import mysql from "mysql2";
-
-const connection = mysql.createConnection(
-    {
-        host: "vladle43.beget.tech",
-        user: 'vladle43_32',
-        password: 'HOVw43*h',
-        database: "vladle43_32"
-    }
-);
+import DataBase from './DataBase.js';
 export class User{
     static login(req, res){
         const email = req.body.email;
         const pass = req.body.pass;
+        let connection = DataBase.connect();
         connection.execute("SELECT * FROM users WHERE email = ? AND pass = ?",
             [email, pass], (err, resultSet)=>{
                 if(resultSet.length){
@@ -33,6 +26,7 @@ export class User{
         const lastname = req.body.lastname;
         const email = req.body.email;
         const pass = req.body.pass;
+        let connection = DataBase.connect();
         connection.execute("SELECT id FROM users WHERE email = ?", [email], (err, resultSet)=>{
             if(resultSet.length){
                 res.json({result:"exist"});
@@ -47,6 +41,7 @@ export class User{
     }
 
     static showProfile(req, res){
+        let connection = DataBase.connect();
         if(req.cookies.session_id){
             connection.execute("SELECT * FROM users WHERE id = ?", [1], (err, resultSet)=>{
                 res.send(resultSet[0].name);
@@ -57,6 +52,7 @@ export class User{
     }
 
     static getCurrentUserData(req, res){
+        let connection = DataBase.connect();
         let sessionID = req.sessionID;
         console.log("sessionID", sessionID);
         connection.execute("SELECT id, name, lastname, email FROM users WHERE token = ?",
@@ -70,6 +66,7 @@ export class User{
     }
 
     static logout(req, res){
+        let connection = DataBase.connect();
         let sessionID = req.sessionID;
         connection.execute("UPDATE `users` SET `token`= '' WHERE token = ?",
             [sessionID], (err, resultSet)=>{

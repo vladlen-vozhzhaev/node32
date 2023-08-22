@@ -1,14 +1,6 @@
-import mysql from "mysql2";
+import DataBase from './DataBase.js';
 import HTMLParser from 'node-html-parser';
 import fs from 'fs';
-const connection = mysql.createConnection(
-    {
-        host: "vladle43.beget.tech",
-        user: 'vladle43_32',
-        password: 'HOVw43*h',
-        database: "vladle43_32"
-    }
-);
 export class Blog{
     static addArticle(req, res){
         const title = req.body.title;
@@ -27,28 +19,31 @@ export class Blog{
             });
             img.setAttribute("src", "/userfiles/"+filename);
         }
-
+        let connection = DataBase.connect();
         connection.execute("INSERT INTO `articles`(`title`, `content`, `author`) VALUES (?, ?, ?)",
             [title, document.toString(), author], (err)=>{
                 res.send('Статья добавлена');
             });
     }
     static getArticles(req, res){
+        let connection = DataBase.connect();
         connection.execute("SELECT * FROM articles", (err, resultSet)=>{
             console.log(resultSet);
-            res.render('articles', {resultSet: resultSet});
+            res.render('articles', {resultSet: resultSet || []});
         })
     }
     static getArticleById(req, res){
         const articleId = req.params['articleId'];
         console.log(articleId);
-        connection.execute(" SELECT articles.id, title, content, comment, author, name, comments.id as comment_id FROM articles, comments, users WHERE articles.id=? AND comments.article_id = articles.id AND users.id = comments.user_id;",
+        let connection = DataBase.connect();
+        connection.execute("SELECT * FROM articles WHERE articles.id=?",
             [articleId], (err, resultSet)=>{
-                res.render('article', {article: resultSet[0], comments: resultSet, name: ""});
+                res.render('article', {article: resultSet[0], comments: [], name: ""});
             })
     }
     static showEditArticle(req, res){
         const articleId = req.params['articleId'];
+        let connection = DataBase.connect();
         connection.execute("SELECT * FROM articles WHERE id = ?",
             [articleId], (err, resultSet)=>{
                 res.render('editArticle', {article: resultSet[0]});
@@ -61,6 +56,7 @@ export class Blog{
         const author = req.body.author;
         let temp = [title, content, author, articleId];
         console.log(temp);
+        let connection = DataBase.connect();
         connection.execute("UPDATE articles SET title=?, content=?, author=? WHERE id = ?",
             [title, content, author, articleId], (err => {
                 res.send("ok");
@@ -68,6 +64,7 @@ export class Blog{
     }
     static deleteArticle(req, res){
         const articleId = req.params['articleId'];
+        let connection = DataBase.connect();
         connection.execute("DELETE FROM `articles` WHERE id = ?", [articleId], (err)=>{
             res.send("ok");
         });
